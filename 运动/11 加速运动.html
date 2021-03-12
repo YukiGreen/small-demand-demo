@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>加速运动</title>
+    <style>
+        div {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 100px;
+            height: 100px;
+            background: orange;
+        }
+        span {
+            position: absolute;
+            left: 300px;
+            top: 0px;
+            background: black;
+            width: 1px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div></div>
+    <span></span>
+    <script>
+        var oDiv = document.getElementsByTagName('div')[0];
+        var timer = null;
+        oDiv.onclick = function () {
+            startMove(this, 300);
+        }
+        function startMove (dom, target) {
+            clearInterval(timer);
+            var a = 3;
+            var iSpeed = 0;
+            var u = 0.8;//摩擦力
+            timer = setInterval(function () {
+                // 加速度减小的加速运动
+                a = (target - dom.offsetLeft) / 5;
+                iSpeed += a;
+                iSpeed *= u; //模仿摩擦力让速度减小
+                //近似把绝对值小于1，看成是速度为0；
+                if (Math.abs(iSpeed) < 1 && Math.abs(target - dom.offsetLeft) < 1) {
+                    clearInterval(timer);
+                    dom.style.left = target + 'px';
+                }else {
+                    dom.style.left = dom.offsetLeft + iSpeed + 'px';
+                }
+            }, 30);
+        }
+    </script>
+</body>
+</html>

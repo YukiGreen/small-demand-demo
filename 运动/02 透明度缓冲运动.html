@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>多物体运动</title>
+    <style>
+        div {
+            position: absolute;
+            left: 0px;
+            width: 100px;
+            height: 100px;
+            background: red;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 想实现一点透明度就发生缓冲变化 -->
+    <div id='demo'></div>
+    <script>
+        var timer = null;
+        var oDiv = document.getElementById('demo');
+        oDiv.onclick = function () {
+            // 50 代表将透明度降到0.5，这种表示方式是将透明度数值扩大了100倍；
+            startMove(this, 50);
+        }
+        // 封装获取当前dom样式的函数
+        function getStyle(dom, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(dom, null)[attr];
+            } else {
+                return dom.currentStyle[attr];
+            }
+        }
+        function startMove(dom, target) {
+            clearInterval(timer);
+            var iSpeed = null, iCur = null;
+            timer = setInterval(function () {
+                // 获取dom本身的透明度
+                iCur = parseFloat( getStyle(dom, 'opacity')) * 100;
+                iSpeed = (target - iCur) / 7;
+                iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+                if(iCur == target) {
+                    clearInterval(timer);
+                }else {
+                    dom.style.opacity = (iCur + iSpeed) / 100;
+                }
+            }, 30);
+        }
+    </script>
+</body>
+
+</html>

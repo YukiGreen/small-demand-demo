@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>多物体不同值运动</title>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            background: red;
+            opacity: 1;
+            margin-bottom: 100px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="top: 0px;"></div>
+    <div style="top: 200px"></div>
+    <div style="top: 400px"></div>
+    <div style="top: 600px"></div>
+    <script>
+        var timer = null;
+        var oDivArray = document.getElementsByTagName('div');
+        oDivArray[0].onclick = function () {
+            startMove(this, 'width', 400);
+        }
+        oDivArray[1].onclick = function () {
+            startMove(this, 'height', 400);
+        }
+        oDivArray[2].onclick = function () {
+            startMove(this, 'borderWidth', 20);
+        }
+        oDivArray[3].onclick = function () {
+            startMove(this, 'opacity', 50);
+        }
+        // 封装获取当前dom样式的函数
+        function getStyle(dom, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(dom, null)[attr];
+            } else {
+                return dom.currentStyle[attr];
+            }
+        }
+        /* // 有个问题，速度快一点多个div都收不回去了，原因是第一个div还没有收回去，
+        第二个div就已经清除了上一个定时器的div了，也就是说同一时间只能有一个定时器起作用。
+        解决办法：每个div只能清理自己的定时器，开启自己的定时器。 */
+        function startMove(dom, attr, target) {
+            clearInterval(dom.timer);
+            var iSpeed = null, iCur = null;
+            dom.timer = setInterval(function () {
+                if(attr == 'opacity'){
+                    iCur = parseFloat( getStyle(dom, attr)) * 100;
+                }else {
+                    iCur = parseFloat( getStyle(dom, attr));
+                }
+                iSpeed = (target - iCur) / 7;
+                iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+                if(iCur == target) {
+                    clearInterval(dom.timer);
+                }else {
+                    if(attr == 'opacity'){
+                        dom.style.opacity = (iCur + iSpeed) / 100;
+                    }
+                    dom.style[attr] = iCur + iSpeed + 'px';
+                }
+            }, 30);
+        }
+    </script>
+</body>
+
+</html>

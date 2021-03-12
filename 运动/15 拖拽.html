@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>拖拽</title>
+    <style>
+        div {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            background: orange;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="demo"></div>
+    <script>
+        oDiv = document.getElementById('demo');
+        // 初始化速度和lastX
+        var iSpeedX = 0;//水平方向上的速度
+        var iSpeedY = 0;//垂直方向上的速度
+        var lastX = 0;//上一次dom的offsetLeft
+        var lastY = 0;//上一次dom的OffsetTop
+        /* 
+        注意总结：一般拖拽事件安排是这样的：这是配套的注意记忆
+        dom.onmousedown = function () {
+            ……
+            document.onmousemove = function (e) {
+
+            }
+            document.onmouseup = function (e) {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                ……
+            }
+        }
+         */
+        oDiv.onmousedown = function (e) {
+            // 先清除该对象上的定时器
+            clearInterval(this.timer);
+            // 为什么这里要用event而不是e
+            /* 定义事件对象 */
+            var event = event || e;
+            /* 获取鼠标在dom中的相对位置 */
+            var disX = event.clientX - this.offsetLeft;
+            var disY = event.clientY - this.offsetTop;
+            var self = this;//在其他函数中用到这个this，要重新起个名称，以免混淆
+            // 注意下面要写两个事件一个时鼠标移动事件，另一个是鼠标拿开事件，都是作用在document;
+            document.onmousemove = function (e) {
+                var event = event || e;
+                var newTop = event.clientY - disY;
+                var newLeft = event.clientX - disX;
+                iSpeedX = newLeft - lastX;
+                iSpeedY = newTop - lastY;
+                lastX = newLeft;
+                lastY = newTop;
+                // 拖拽时，dom的位置
+                self.style.left = newLeft + 'px';
+                self.style.top = newTop + 'px';
+            }
+            document.onmouseup = function (e) {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                startMove(self, iSpeedX, iSpeedY);
+            }
+        }
+
+        function startMove(dom, iSpeedX, iSpeedY) {
+            clearInterval(dom.timer);
+            var g = 3;
+            dom.timer = setInterval(function () {
+                iSpeedY += g;
+
+                var newTop = dom.offsetTop + iSpeedY;
+                var newLeft = dom.offsetLeft + iSpeedX;
+                if (newTop >= document.documentElement.clientHeight - dom.clientHeight) {
+                    iSpeedY *= -1;
+                    iSpeedY *= 0.8;
+                    iSpeedX *= 0.8;
+                    newTop = document.documentElement.clientHeight - dom.clientHeight;
+                    // 上面这句可以解决滚动条问题；****
+                }
+                if (newTop <= 0) {
+                    iSpeedY *= -1;
+                    iSpeedY *= 0.8;
+                    iSpeedX *= 0.8;
+                    newTop = 0;
+                }
+                if (newLeft >= document.documentElement.clientWidth - dom.clientWidth) {
+                    iSpeedX *= -1;
+                    iSpeedY *= 0.8;
+                    iSpeedX *= 0.8;
+                    newLeft = document.documentElement.clientWidth - dom.clientWidth;
+                }
+                if (newLeft <= 0) {
+                    iSpeedX *= -1;
+                    iSpeedY *= 0.8;
+                    iSpeedX *= 0.8;
+                    newLeft = 0;
+                }
+                if (Math.abs(iSpeedX) < 1) {
+                    iSpeedX = 0;
+                }
+                if (Math.abs(iSpeedY) < 1) {
+                    iSpeedY = 0;
+                }
+                if (iSpeedY == 0 && iSpeedY == 0 && Math.abs(newTop == document.documentElement.clientHeight - dom.clientHeight)) {
+                    clearInterval(dom.timer);
+                    console.log("over");
+                } else {
+                    dom.style.top = newTop + 'px';
+                    dom.style.left = newLeft + 'px';
+                }
+            }, 30);
+        }
+    </script>
+</body>
+
+</html>

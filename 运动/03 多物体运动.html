@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>多物体运动</title>
+    <style>
+        div {
+            position: absolute;
+            left: 0px;
+            width: 100px;
+            height: 100px;
+            background: red;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="top: 0px;"></div>
+    <div style="top: 200px"></div>
+    <div style="top: 400px"></div>
+    <div style="top: 600px"></div>
+    <script>
+        var timer = null;
+        var oDivArray = document.getElementsByTagName('div');
+        for (var i = 0; i < oDivArray.length; i++) {
+            oDivArray[i].onmouseenter = function () {
+                startMove(this, 400);
+            }
+            oDivArray[i].onmouseleave = function () {
+                startMove(this, 100);
+            }
+        }
+        // 封装获取当前dom样式的函数
+        function getStyle(dom, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(dom, null)[attr];
+            } else {
+                return dom.currentStyle[attr];
+            }
+        }
+        /* // 有个问题，速度快一点多个div都收不回去了，原因是第一个div还没有收回去，
+        第二个div就已经清除了上一个定时器的div了，也就是说同一时间只能有一个定时器起作用。
+        解决办法：每个div只能清理自己的定时器，开启自己的定时器。 */
+        function startMove(dom, target) {
+            clearInterval(dom.timer);
+            var iSpeed = null, iCur = null;
+            dom.timer = setInterval(function () {
+                // 获取dom本身的透明度
+                iCur = parseFloat( getStyle(dom, 'width'));
+                iSpeed = (target - iCur) / 7;
+                iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+                if(iCur == target) {
+                    clearInterval(dom.timer);
+                }else {
+                    dom.style.width = iCur + iSpeed + 'px';
+                }
+            }, 30);
+        }
+    </script>
+</body>
+
+</html>

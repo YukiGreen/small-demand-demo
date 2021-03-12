@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>匀速运动</title>
+    <style>
+        div {
+            position: absolute;
+            width:100px;
+            height:100px;
+            background-color: red;
+            left: 900px;
+            border: 1px solid black;
+        }
+        span {
+            position: absolute;
+            height:100px;
+            left: 600px;
+            border: 1px solid black;
+            background-color: black;
+        }
+        #btn {
+            position: absolute;
+            top:500px;
+        }
+
+    </style>
+</head>
+<body>
+    <div></div>
+    <span></span>
+    <button id="btn">开始</button>
+    <script>
+        var oDiv = document.getElementsByTagName('div')[0];
+        var oBtn = document.getElementById('btn');
+        var timer = null;
+        oBtn.onclick = function () {
+            startMove(oDiv, 600);
+        }
+        // 匀速运动：物体的速度：“不变”：当物体距离目标点的距离绝对值小于速度绝对值时，将物体直接移动到目标点；
+        // 匀速运动封装如下：从左往右运动，或从右往左运动均兼容
+        function startMove(dom, target) {
+            clearInterval(timer);
+            var iSpeed = target - dom.offsetLeft > 0 ? 7 : -7;
+            timer = setInterval(function() {
+                if(Math.abs(target - dom.offsetLeft) < Math.abs(iSpeed) ) {
+                    clearInterval(timer);
+                    dom.style.left = target + 'px';
+                }else{
+                    dom.style.left = dom.offsetLeft + iSpeed + 'px';
+                }                
+            }, 30);
+        }
+    </script>
+</body>
+</html>

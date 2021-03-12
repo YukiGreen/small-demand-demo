@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>缓冲运动</title>
+    <style>
+        div {
+            position: absolute;
+            width:100px;
+            height:100px;
+            background-color: red;
+            left: 100px;
+            border: 1px solid black;
+        }
+        span {
+            position: absolute;
+            height:100px;
+            left: 600px;
+            border: 1px solid black;
+            background-color: black;
+        }
+        #btn {
+            position: absolute;
+            top:150px;
+        }
+
+    </style>
+</head>
+<body>
+    <div></div>
+    <span></span>
+    <button id="btn">开始</button>
+    <script>
+        var oDiv = document.getElementsByTagName('div')[0];
+        var oBtn = document.getElementById('btn');
+        var timer = null;
+        oBtn.onclick = function () {
+            startMove(oDiv, 600);
+        }
+        // 缓冲运动：物体的速度：距离目标点越近，就越小，当到达目标点时速度减小为零；
+        // 缓冲运动封装如下：从左往右运动，或从右往左运动均兼容
+        function startMove(dom, target) {
+            clearInterval(timer);
+            var iSpeed = null;
+            timer = setInterval(function() {
+                iSpeed = (target - dom.offsetLeft) / 7;
+                iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+                if(dom.offsetLeft == target) {
+                    clearInterval(timer);
+                }else{
+                    dom.style.left = dom.offsetLeft + iSpeed + 'px';
+                }                
+            }, 30);
+        }
+    </script>
+</body>
+</html>
